@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException # 把遇到的意�
 from ocr_component import get_captcha_code
 import pprint
 from selenium.webdriver.common.alert import Alert
+import os
 
 options = webdriver.ChromeOptions() # 創立driver物件所需的參數物件
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -110,23 +111,36 @@ check = driver.find_element(
 #
 ### 第三頁
 #
-time.sleep(3)
-id_card_input = input("請輸入身份證字號: \n")
-id_card = driver.find_element(By.ID, "idNumber").send_keys(id_card_input)
+time.sleep(2)
+id_card = driver.find_element(By.ID, "idNumber")
+# id_card_input = input("請輸入身份證字號: \n")
+personal_id = os.getenv('PERSONAL_ID') # 從環境變數拿(**會存在電腦裡的環境變數**)
+id_card.send_keys(personal_id)
 
+phone_num = driver.find_element(By.ID, "mobilePhone")
+# phone_num_input = input("請輸入電話: \n")
+personal_phone_num = os.getenv('PERSONAL_PHONE_NUMBER') # 從環境變數拿(**會存在電腦裡的環境變數**)
+phone_num = driver.find_element(By.ID, "mobilePhone").send_keys(personal_phone_num)
 
-phone_num_input = input("請輸入電話: \n")
-phone_num = driver.find_element(By.ID, "mobilePhone").send_keys(phone_num_input)
-
-email_input = input("請輸入email: \n")
-email = driver.find_element(By.ID, "email").send_keys(email_input)
+# email_input = input("請輸入email: \n")
+email = driver.find_element(By.ID, "email")
+personal_email = os.getenv('PERSONAL_EMAIL') # 從環境變數拿(**會存在電腦裡的環境變數**)
+email = driver.find_element(By.ID, "email").send_keys(personal_email)
 
 agree_btn = driver.find_element(By.XPATH, "//input[@name='agree' and @class='uk-checkbox']").click()
 time.sleep(5)
 isSubmit = driver.find_element(By.ID, "isSubmit").click()
 
 
-time.sleep(1000)
+# Ticket summary
+driver.find_element(
+    By.CLASS_NAME, "ticket-summary"
+).screenshot('thsr_summary.png')
+
+print("訂票完成")
+
+
+time.sleep(2000)
 driver.quit()
 
 
