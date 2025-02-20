@@ -18,3 +18,9 @@ def chat_with_chatgpt(user_message, system_prompt):
     )
 
     return completion.choices[0].message
+
+if __name == '__main__':
+    chat_with_chatgpt(
+        user_message="我要珍珠奶茶微微",
+        system_prompt="你是飲料店的店員，有人向你點餐"
+    )
