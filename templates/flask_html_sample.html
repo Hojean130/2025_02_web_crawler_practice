@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>質感輸入框</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full text-center">
+        <!-- 從flask把 name 等變數 傳進來-->
+        <!-- Jinja2 模板引擎 -->
+        <h3>Get name</h3>
+        {% if name %}
+            <p> 我的名字是: {{ name }} </p>
+        {% endif %}
+
+        <h3>Get numbers</h3>
+        {% for number in numbers %}
+            <p>  Get number : {{ number }} </p>
+        {% endfor %}
+
+        <h3>Get pairs</h3>
+        {% for alpha, number in pairs %}
+            <p>  Get pairs : {{ alpha }}, {{ number }} </p>
+        {% endfor %}
+
+        <h3>Get dictionary</h3>
+        {% for key, value in dict_data.items() %}
+            <p>  Get dictionary : {{ key }}, {{ value }} </p>
+        {% endfor %}
+
+        {% for key in dict_data %}
+            <p>  Get value with key: {{dict_data[key]}} </p>
+        {% endfor %}
+        <h2 class="text-white text-2xl font-semibold mb-4">輸入你的內容</h2>
+        <input type="text" placeholder="請輸入文字..." 
+            class="w-full p-3 text-white bg-gray-700 border-none rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-gray-400">
+        <button class="w-full mt-4 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition">送出</button>
+    </div>
+</body>
+</html>
