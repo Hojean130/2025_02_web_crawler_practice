@@ -1,26 +1,34 @@
+from pprint import pprint
 from openai import OpenAI
 client = OpenAI()
 
 
-def chat_with_chatgpt(user_message, system_prompt):
+def chat_with_chatgpt(
+        user_message,
+        system_prompt,
+        completition__model="gpt-4o-mini"):
     completion = client.chat.completions.create(
-        model="gpt-4o-mini", # model name (影響花多少錢)
+        model=completition__model,  # model name
         messages=[
             {
-                "role": "system", 
+                "role": "system",
                 "content": system_prompt
             },
             {
                 "role": "user",
-                "content": user_message # user的內容
+                "content": user_message
             }
         ]
     )
 
-    return completion.choices[0].message
+    # pprint(completion)
+    print(completion.choices[0].message.content)
+
+    return completion.choices[0].message.content
+
 
 if __name__ == '__main__':
     chat_with_chatgpt(
-        user_message="我要珍珠奶茶微微",
-        system_prompt="你是飲料店的店員，有人向你點餐"
+        user_message="我要珍珠奶茶微糖微冰。",
+        system_prompt="你是一位飲料店的店員，有人向你點餐。"
     )
