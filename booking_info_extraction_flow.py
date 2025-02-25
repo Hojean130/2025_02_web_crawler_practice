@@ -15,19 +15,22 @@ standard_format = {
 today = date.today().strftime("%Y/%m/%d")
 
 
-# 運用正則表達式
+# 運用正則表達式，將 chatGPT 給額外的字拿掉，剩下字典
 def extract_dict_from_string(input_string):
     # 定義正則表達式來匹配字典內容
     pattern = r"\{\s*'[^']*':\s*'[^']*'(?:,\s*'[^']*':\s*'[^']*')*\s*\}"
     match = re.search(pattern, input_string)
 
     if match:
-        dict_string = match.group(0)
-        # 將單引號替換為雙引號以便於 json.loads 解析
+        dict_string = match.group(0)  # 取得正則表達式比對到的完整字串
+
+        # 將單引號替換為雙引號以符合 JSON 格式（JSON 標準要求鍵和值都要用雙引號）
         dict_string = dict_string.replace("'", "\"")
+
         print("After regular expression ....: ", dict_string)
-        return json.loads(dict_string)
+        return json.loads(dict_string)  # 使用 json.loads 解析字串，將其轉換為 Python 字典
     else:
+        # 如果 match 變數為 None，代表正則表達式沒有找到符合的字串，拋出錯誤
         raise ValueError("Information Extraction Failed.")
 
 
@@ -50,6 +53,7 @@ def ask_booking_information():
     # 透過 ChatGPT 解析使用者輸入
     booking_info = chat_with_chatgpt(user_response, system_prompt)
     
+    # 將回傳的答案都先經過正則表達式確認
     return extract_dict_from_string(booking_info)
 
 
