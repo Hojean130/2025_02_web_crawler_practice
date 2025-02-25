@@ -164,3 +164,4 @@ if __name__ == "__main__":
 
     time.sleep(10)  # 等待 10 秒確保訂票完成
     driver.quit()  # 關閉瀏覽器
+    
