@@ -23,3 +23,9 @@
     > git pull --rebase
     
     > git pull --rebase <remote_name> <remote_branch>
+
+
+* 將檔案拉至電腦
+   > cd 路徑/到/你的資料夾
+   > git clone <GitHub 儲存庫的 URL>
+
