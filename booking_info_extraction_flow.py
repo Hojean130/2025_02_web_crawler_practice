@@ -93,3 +93,4 @@ if __name__ == '__main__':
     
     # Step 3：調整日期格式，以便爬蟲使用
     booking_info = convert_date_to_thsr_format(booking_info)
+    
