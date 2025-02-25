@@ -9,8 +9,8 @@ from ocr_component import get_captcha_code  # OCR 辨識驗證碼函式
 
 # Project import from from booking_info_extraction_flow
 from booking_info_extraction_flow import (
-    ask_booking_infomation,
-    ask_missing_infomation,
+    ask_booking_information,
+    ask_missing_information,
     convert_date_to_thsr_format
 )
 
@@ -45,7 +45,12 @@ def booking_with_info(start_station, dest_station, start_time, start_date):
 
     # 選擇出發日期
     driver.find_element(By.XPATH, "//input[@class='uk-input' and @readonly='readonly']").click()
-    driver.find_element(By.XPATH, f"//span[@class='flatpickr-day' and @aria-label='{start_date}']").click()
+
+    # 只選 class='flatpickr-day' 時今天的會出錯，因為今天的 class="flatpickr-day today selected"
+    driver.find_element(
+        By.XPATH, 
+        f"//span[(@class='flatpickr-day' or @class='flatpickr-day today selected') and @aria-label='{start_date}']"
+        ).click()
 
     while True:
         # 取得驗證碼圖片並存檔
@@ -141,10 +146,10 @@ if __name__ == "__main__":
     # start_date = '二月 25, 2025'
 
     # Step 1：向使用者詢問訂票資訊
-    booking_info = ask_booking_infomation()
+    booking_info = ask_booking_information()
     
     # Step 2：檢查是否有缺少的資訊，並請使用者補充
-    booking_info = ask_missing_infomation(booking_info)
+    booking_info = ask_missing_information(booking_info)
     
     # Step 3：調整日期格式，以便爬蟲使用
     booking_info = convert_date_to_thsr_format(booking_info)
@@ -154,7 +159,7 @@ if __name__ == "__main__":
     # Step 4：選擇車次
     trains_info = booking_with_info(
         start_station= booking_info['出發站'], 
-        dest_station= booking_info['抵達站'], 
+        dest_station= booking_info['到達站'], 
         start_time= booking_info['出發時辰'], 
         start_date= booking_info['出發日期'])
     
@@ -164,4 +169,6 @@ if __name__ == "__main__":
 
     time.sleep(10)  # 等待 10 秒確保訂票完成
     driver.quit()  # 關閉瀏覽器
-    
+
+
+# 不處理高雄代表左營站，預設輸入者知道(單純不處理xd)

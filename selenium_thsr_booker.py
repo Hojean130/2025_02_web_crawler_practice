@@ -42,7 +42,10 @@ form_groups = driver.find_element(
 
 start_date = '二月 21, 2025'
 form_groups_selsct = driver.find_element(
-    By.XPATH, f"//span[@class='flatpickr-day' and @aria-label='{start_date}']").click()
+    By.XPATH, 
+    f"//span[(@class='flatpickr-day' or @class='flatpickr-day today selected') and @aria-label='{start_date}']"
+    ).click()
+
 
 while True:
     # 驗證碼
