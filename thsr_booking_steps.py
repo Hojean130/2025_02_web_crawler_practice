@@ -97,11 +97,12 @@ def booking_with_info(start_station, dest_station, start_time, start_date):
     return trains_info
 
 
-def select_train_and_submit_booking(trains_info):
+def select_train_and_submit_booking(trains_info, which_train=None):
     """執行第二步：選擇車次並填寫個人資料"""
-    
-    # 讓使用者選擇車次
-    which_train = int(input("Choose your train. Enter from 0~9: "))
+    if which_train is None:
+        # 如果沒有選擇車次，則由使用者選擇(一般程式的執行流程，採用CMD輸入)
+        which_train = int(input("Choose your train. Enter from 0~9: "))
+
     trains_info[which_train]['radio_box'].click()
 
     # 送出訂票請求
@@ -133,6 +134,7 @@ def select_train_and_submit_booking(trains_info):
     driver.find_element(By.CLASS_NAME, 'ticket-summary').screenshot(screenshot_filename)
     print("訂票完成!")
 
+    driver.quit()
     return screenshot_filename
 
 
@@ -166,9 +168,6 @@ if __name__ == "__main__":
     # Step 5：選擇車次並填寫個人資料
     select_train_and_submit_booking(trains_info)
 
-
-    time.sleep(10)  # 等待 10 秒確保訂票完成
-    driver.quit()  # 關閉瀏覽器
 
 
 # 不處理高雄代表左營站，預設輸入者知道(單純不處理xd)
