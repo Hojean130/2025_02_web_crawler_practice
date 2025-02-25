@@ -1,7 +1,7 @@
 from chatgpt_sample import chat_with_chatgpt  # 引入 ChatGPT API 互動函數
 from datetime import date  # 引入 datetime 模組來取得今天日期
 import json  # 引入 json 模組處理字典與字串轉換
-
+import re
 
 # 定義標準的訂票資訊格式
 standard_format = {
@@ -15,7 +15,24 @@ standard_format = {
 today = date.today().strftime("%Y/%m/%d")
 
 
-def ask_booking_infomation():
+# 運用正則表達式
+def extract_dict_from_string(input_string):
+    # 定義正則表達式來匹配字典內容
+    pattern = r"\{\s*'[^']*':\s*'[^']*'(?:,\s*'[^']*':\s*'[^']*')*\s*\}"
+    match = re.search(pattern, input_string)
+
+    if match:
+        dict_string = match.group(0)
+        # 將單引號替換為雙引號以便於 json.loads 解析
+        dict_string = dict_string.replace("'", "\"")
+        print("After regular expression ....: ", dict_string)
+        return json.loads(dict_string)
+    else:
+        raise ValueError("Information Extraction Failed.")
+
+
+# 結合 chatgpt 詢問
+def ask_booking_information():
     """向使用者詢問高鐵訂票資訊，並使用 ChatGPT 解析輸入內容。"""
     print("Ask booking information")
     
@@ -33,11 +50,10 @@ def ask_booking_infomation():
     # 透過 ChatGPT 解析使用者輸入
     booking_info = chat_with_chatgpt(user_response, system_prompt)
     
-    # 轉換回 Python 字典，並返回結果
-    return json.loads(booking_info.replace("'", "\""))
+    return extract_dict_from_string(booking_info)
 
 
-def ask_missing_infomation(booking_info):  # Slot filling
+def ask_missing_information(booking_info):  # Slot filling
     """檢查是否有缺少的訂票資訊，並提示使用者補充。"""
     print("Ask missing information")
     
@@ -62,8 +78,9 @@ def ask_missing_infomation(booking_info):  # Slot filling
     
     # 透過 ChatGPT 解析補充資訊，並更新訂票資訊
     booking_info = chat_with_chatgpt(user_response, system_prompt)
-    return json.loads(booking_info.replace("'", "\""))
 
+    return extract_dict_from_string(booking_info)
+    
 
 def convert_date_to_thsr_format(booking_info):
     """將出發日期格式轉換為台灣高鐵網站使用的格式（例如：'2025/02/25' -> '二月 25, 2025'）。"""
@@ -86,11 +103,10 @@ def convert_date_to_thsr_format(booking_info):
 
 if __name__ == '__main__':
     # Step 1：向使用者詢問訂票資訊
-    booking_info = ask_booking_infomation()
+    booking_info = ask_booking_information()
     
     # Step 2：檢查是否有缺少的資訊，並請使用者補充
-    booking_info = ask_missing_infomation(booking_info)
+    booking_info = ask_missing_information(booking_info)
     
     # Step 3：調整日期格式，以便爬蟲使用
     booking_info = convert_date_to_thsr_format(booking_info)
-    
