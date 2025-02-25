@@ -8,6 +8,12 @@ import pprint
 from selenium.webdriver.common.alert import Alert  # 用來處理彈出警告框
 import os  # 用來處理環境變數
 
+from booking_info_extraction_flow import(
+    ask_booking_information,
+    ask_missing_information,
+    convert_date_to_thsr_format
+)
+
 def create_driver():
     # 配置 Chrome 選項，禁止啟用瀏覽器自動化的提示
     options = webdriver.ChromeOptions()
@@ -154,22 +160,32 @@ def select_train_and_submit_booking(thsr_list):
 if __name__ == "__main__":
     """主程式執行流程"""
     
-    # 訂票參數
-    start_station = '台中'
-    dest_station = '板橋'
-    start_time = '18:00'
-    start_date = '二月 25, 2025'
+    # # 訂票參數
+    # start_station = '台中'
+    # dest_station = '板橋'
+    # start_time = '18:00'
+    # start_date = '二月 25, 2025'
 
     create_driver()  # 建立瀏覽器驅動
+
+    # Step 1：向使用者詢問訂票資訊
+    booking_info = ask_booking_information()
     
-    # 執行第一步和第二步：選擇車次
-    trains_info = booking_with_info(start_station, dest_station, start_time, start_date)
+    # Step 2：檢查是否有缺少的資訊，並請使用者補充
+    booking_info = ask_missing_information(booking_info)
     
-    # 執行第三步和第四步：選擇車次並填寫個人資料
+    # Step 3：調整日期格式，以便爬蟲使用
+    booking_info = convert_date_to_thsr_format(booking_info)
+    
+    # Step 4：選擇車次
+    trains_info = booking_with_info(
+        start_station = booking_info['出發站'], 
+        dest_station = booking_info['到達站'], 
+        start_time = booking_info['出發時辰'], 
+        start_date = booking_info['出發日期'])
+    
+    # Step 5：選擇車次並填寫個人資料
     select_train_and_submit_booking(trains_info)
 
     time.sleep(10)  # 等待 10 秒確保訂票完成
     driver.quit()  # 關閉瀏覽器
-    
-time.sleep(2000)
-driver.quit()  # 關閉瀏覽器
